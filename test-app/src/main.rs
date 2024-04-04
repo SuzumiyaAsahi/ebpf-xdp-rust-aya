@@ -78,7 +78,9 @@ async fn main() -> Result<(), anyhow::Error> {
         let events = guard.get_inner_mut();
         while let Some(ring_event) = events.next() {
             let the_len = ring_event.len();
-            println!("what is it {len}?");
+            for i in 0..the_len {
+                println!("{}", ring_event[i]);
+            }
         }
     }
 
