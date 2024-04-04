@@ -1,4 +1,5 @@
 use anyhow::Context;
+use anyhow::Ok;
 use aya::maps::ring_buf::RingBuf;
 use aya::maps::ring_buf::RingBufItem;
 use aya::maps::HashMap;
@@ -6,6 +7,7 @@ use aya::programs::{Xdp, XdpFlags};
 use aya::{include_bytes_aligned, Bpf};
 use aya_log::BpfLogger;
 use clap::Parser;
+use libc::signal;
 use libc::sleep;
 use log::{debug, info, warn};
 use std::borrow::Borrow;
@@ -14,7 +16,6 @@ use std::convert::TryFrom;
 use std::net::Ipv4Addr;
 use tokio::io::unix::AsyncFd;
 use tokio::signal;
-use tokio::signal::unix::signal;
 use tokio::signal::unix::SignalKind;
 use tokio::time;
 
@@ -73,20 +74,29 @@ async fn main() -> Result<(), anyhow::Error> {
     let mut events = RingBuf::try_from(bpf.map_mut("RB").unwrap())?;
     let mut events_fd = AsyncFd::new(events).unwrap();
 
-    loop {
-        let mut guard = events_fd.readable_mut().await.unwrap();
-        let events = guard.get_inner_mut();
-        while let Some(ring_event) = events.next() {
-            let the_len = ring_event.len();
-            for i in 0..the_len {
-                println!("{}", ring_event[i]);
-            }
-        }
-    }
-
     info!("Waiting for Ctrl-C...");
-    signal::ctrl_c().await?;
-    info!("Exiting...");
+
+    loop {
+        tokio::select! {
+
+         _ = signal::ctrl_c() => {
+             info!("Exiting...");
+             break;
+        },
+
+        _ = async {
+            let mut guard = events_fd.readable_mut().await.unwrap();
+            let events = guard.get_inner_mut();
+            while let Some(ring_event) = events.next() {
+                let the_len = ring_event.len();
+                for i in 0..the_len {
+                    println!("{}", ring_event[i]);
+                    }
+                }
+
+            }=>{}
+        };
+    }
 
     Ok(())
 }
