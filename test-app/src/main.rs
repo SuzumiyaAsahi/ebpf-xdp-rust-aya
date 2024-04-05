@@ -1,23 +1,13 @@
-use anyhow::Context;
-use anyhow::Ok;
+use anyhow::{Context, Ok};
 use aya::maps::ring_buf::RingBuf;
-use aya::maps::ring_buf::RingBufItem;
 use aya::maps::HashMap;
 use aya::programs::{Xdp, XdpFlags};
 use aya::{include_bytes_aligned, Bpf};
 use aya_log::BpfLogger;
 use clap::Parser;
-use libc::signal;
-use libc::sleep;
 use log::{debug, info, warn};
-use std::borrow::Borrow;
-use std::borrow::BorrowMut;
-use std::convert::TryFrom;
 use std::net::Ipv4Addr;
-use tokio::io::unix::AsyncFd;
-use tokio::signal;
-use tokio::signal::unix::SignalKind;
-use tokio::time;
+use tokio::{io::unix::AsyncFd, signal};
 
 #[derive(Debug, Parser)]
 struct Opt {
@@ -71,7 +61,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     blocklist.insert(block_addr, 0, 0)?;
 
-    let mut events = RingBuf::try_from(bpf.map_mut("RB").unwrap())?;
+    let events = RingBuf::try_from(bpf.map_mut("RB").unwrap())?;
     let mut events_fd = AsyncFd::new(events).unwrap();
 
     info!("Waiting for Ctrl-C...");
