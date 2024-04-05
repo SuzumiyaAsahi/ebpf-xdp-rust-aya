@@ -1,16 +1,12 @@
 use anyhow::{Context, Ok};
-use aya::maps::ring_buf::RingBuf;
-use aya::maps::HashMap;
 use aya::programs::{Xdp, XdpFlags};
 use aya::{include_bytes_aligned, Bpf};
+use aya::{maps::ring_buf::RingBuf, maps::HashMap};
 use aya_log::BpfLogger;
 use clap::Parser;
-use dotenvy::dotenv_iter;
-use env_logger::Env;
 use log::{debug, info, warn};
 use sqlx::sqlite::SqlitePool;
-use std::env;
-use std::net::Ipv4Addr;
+use std::{env, net::Ipv4Addr, str::FromStr};
 use test_app_common::{PackageInfo, PINFOLEN};
 use tokio::{io::unix::AsyncFd, signal};
 
@@ -67,13 +63,6 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let mut blocklist: HashMap<_, u32, u32> = HashMap::try_from(bpf.map_mut("BLOCKLIST").unwrap())?;
 
-    let block_addr: u32 = Ipv4Addr::new(172, 19, 96, 1).try_into()?;
-
-    blocklist.insert(block_addr, 0, 0)?;
-
-    let events = RingBuf::try_from(bpf.map_mut("RB").unwrap())?;
-    let mut events_fd = AsyncFd::new(events).unwrap();
-
     dotenvy::dotenv().ok();
     let db_url = env::var("DATABASE_URL").expect("Please set DATABASE_URL");
     let pool = SqlitePool::connect(db_url.as_str()).await?;
@@ -82,8 +71,13 @@ async fn main() -> Result<(), anyhow::Error> {
         .fetch_all(&pool)
         .await?;
 
-    println!("{:?}", rows);
+    for i in rows {
+        let block_addr: u32 = Ipv4Addr::from_str(&i.ipv4).unwrap().try_into()?;
+        blocklist.insert(block_addr, 0, 0)?;
+    }
 
+    let events = RingBuf::try_from(bpf.map_mut("RB").unwrap())?;
+    let mut events_fd = AsyncFd::new(events).unwrap();
     info!("Waiting for Ctrl-C...");
 
     loop {
