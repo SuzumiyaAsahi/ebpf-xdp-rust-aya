@@ -7,14 +7,14 @@ publish = false
 [dependencies]
 aya = { git = "https://github.com/aya-rs/aya", features = ["async_tokio"] }
 aya-log = { git = "https://github.com/aya-rs/aya" }
-clap = { version = "4.1", features = ["derive"] }
+clap = { version = "4.5.4", features = ["derive"] }
 test-app-common = { path = "../test-app-common", features = ["user"] }
-anyhow = "1"
-env_logger = "0.10"
-libc = "0.2"
-log = "0.4"
-tokio = { version = "1.36.0", features = ["full"] }
-# tokio = { version = "1.25", features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
+anyhow = "1.0.81"
+env_logger = "0.11.3"
+libc = "0.2.153"
+log = "0.4.21"
+tokio = { version = "1.37.0", features = ["full"] }
+
 
 [[bin]]
 name = "test-app"

@@ -7,6 +7,7 @@ use aya_log::BpfLogger;
 use clap::Parser;
 use log::{debug, info, warn};
 use std::net::Ipv4Addr;
+use test_app_common::{PackageInfo, PINFOLEN};
 use tokio::{io::unix::AsyncFd, signal};
 
 #[derive(Debug, Parser)]
@@ -69,20 +70,21 @@ async fn main() -> Result<(), anyhow::Error> {
     loop {
         tokio::select! {
 
-         _ = signal::ctrl_c() => {
-             info!("Exiting...");
-             break;
+        _ = signal::ctrl_c() => {
+            info!("Exiting...");
+            break;
         },
 
         _ = async {
             let mut guard = events_fd.readable_mut().await.unwrap();
             let events = guard.get_inner_mut();
             while let Some(ring_event) = events.next() {
-                let the_len = ring_event.len();
-                for i in 0..the_len {
-                    println!("{}", ring_event[i]);
-                    }
-                }
+            let info = PackageInfo::from_bytes(ring_event.first_chunk::<{ PINFOLEN }>().unwrap());
+            println!(
+                "{} {} {} {}",
+                Ipv4Addr::from(info.source_ip).to_string(), info.source_port, info.destination_port, info.proto_type
+            );
+        }
 
             }=>{}
         };
