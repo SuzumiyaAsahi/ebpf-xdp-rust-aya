@@ -5,7 +5,11 @@ use aya::programs::{Xdp, XdpFlags};
 use aya::{include_bytes_aligned, Bpf};
 use aya_log::BpfLogger;
 use clap::Parser;
+use dotenvy::dotenv_iter;
+use env_logger::Env;
 use log::{debug, info, warn};
+use sqlx::sqlite::SqlitePool;
+use std::env;
 use std::net::Ipv4Addr;
 use test_app_common::{PackageInfo, PINFOLEN};
 use tokio::{io::unix::AsyncFd, signal};
@@ -14,6 +18,11 @@ use tokio::{io::unix::AsyncFd, signal};
 struct Opt {
     #[clap(short, long, default_value = "eth0")]
     iface: String,
+}
+
+#[derive(Debug)]
+struct BLockedIp {
+    ipv4: String,
 }
 
 #[tokio::main]
@@ -64,6 +73,16 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let events = RingBuf::try_from(bpf.map_mut("RB").unwrap())?;
     let mut events_fd = AsyncFd::new(events).unwrap();
+
+    dotenvy::dotenv().ok();
+    let db_url = env::var("DATABASE_URL").expect("Please set DATABASE_URL");
+    let pool = SqlitePool::connect(db_url.as_str()).await?;
+
+    let rows: Vec<BLockedIp> = sqlx::query_as!(BLockedIp, r#"SELECT ipv4 FROM blocked_ip"#)
+        .fetch_all(&pool)
+        .await?;
+
+    println!("{:?}", rows);
 
     info!("Waiting for Ctrl-C...");
 
