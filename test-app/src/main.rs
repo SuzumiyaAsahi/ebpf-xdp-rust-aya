@@ -7,7 +7,7 @@ use clap::Parser;
 use log::{debug, info, warn};
 use sqlx::sqlite::SqlitePool;
 use std::{env, net::Ipv4Addr, str::FromStr};
-use test_app_common::{PackageInfo, PINFOLEN};
+use test_app_common::{PackageInfo, ProtocalType, PINFOLEN};
 use tokio::{io::unix::AsyncFd, signal};
 
 #[derive(Debug, Parser)]
@@ -71,6 +71,7 @@ async fn main() -> Result<(), anyhow::Error> {
         .fetch_all(&pool)
         .await?;
 
+    // 这个要在RingBuf前面执行，要不然就会违反借用原则
     for i in rows {
         let block_addr: u32 = Ipv4Addr::from_str(&i.ipv4).unwrap().try_into()?;
         blocklist.insert(block_addr, 0, 0)?;
@@ -83,21 +84,37 @@ async fn main() -> Result<(), anyhow::Error> {
     loop {
         tokio::select! {
 
-        _ = signal::ctrl_c() => {
-            info!("Exiting...");
-            break;
-        },
+            _ = signal::ctrl_c() => {
+                info!("Exiting...");
+                break;
+            },
 
-        _ = async {
-            let mut guard = events_fd.readable_mut().await.unwrap();
-            let events = guard.get_inner_mut();
-            while let Some(ring_event) = events.next() {
-            let info = PackageInfo::from_bytes(ring_event.first_chunk::<{ PINFOLEN }>().unwrap());
-            println!(
-                "{} {} {} {}",
-                Ipv4Addr::from(info.source_ip).to_string(), info.source_port, info.destination_port, info.proto_type
-            );
-        }
+            _ = async {
+                let mut guard = events_fd.readable_mut().await.unwrap();
+                let events = guard.get_inner_mut();
+                    while let Some(ring_event) = events.next() {
+                    let info = PackageInfo::from_bytes(ring_event.first_chunk::<{ PINFOLEN }>().unwrap());
+
+                    let proto_string = match info.proto_type() {
+                        ProtocalType::TCP => String::from("TCP"),
+                        ProtocalType::UDP => String::from("UDP"),
+                        ProtocalType::Unknown => String::from("Unknown")
+                    };
+
+                    let ip_addr = Ipv4Addr::from(info.source_ip).to_string();
+                    let _ = sqlx::query!("INSERT INTO package_info
+                        (source_ip, source_port, destination_port, proto_type) 
+                        VALUES ($1, $2, $3, $4)",
+                        ip_addr,
+                        info.source_port,
+                        info.destination_port,
+                        proto_string
+                        ).execute(&pool).await;
+                    println!(
+                        "{} {} {} {}",
+                        Ipv4Addr::from(info.source_ip).to_string(), info.source_port, info.destination_port, info.proto_type
+                    );
+                }
 
             }=>{}
         };

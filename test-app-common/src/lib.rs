@@ -57,4 +57,18 @@ impl PackageInfo {
             proto_type,
         }
     }
+
+    pub fn proto_type(&self) -> ProtocalType {
+        match self.proto_type {
+            6 => ProtocalType::TCP,
+            17 => ProtocalType::UDP,
+            _ => ProtocalType::Unknown,
+        }
+    }
+}
+
+pub enum ProtocalType {
+    TCP,
+    UDP,
+    Unknown,
 }
