@@ -21,6 +21,15 @@ struct BLockedIp {
     ipv4: String,
 }
 
+#[derive(sqlx::FromRow, Debug, PartialEq, Eq)]
+struct IpInfo {
+    id: i64,
+    source_ip: String,
+    source_port: i64,
+    destination_port: i64,
+    proto_type: String,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
     let opt = Opt::parse();
@@ -66,6 +75,19 @@ async fn main() -> Result<(), anyhow::Error> {
     dotenvy::dotenv().ok();
     let db_url = env::var("DATABASE_URL").expect("Please set DATABASE_URL");
     let pool = SqlitePool::connect(db_url.as_str()).await?;
+    let _ = sqlx::query("DROP TABLE package_info").execute(&pool).await;
+
+    let _ = sqlx::query!(
+        "CREATE TABLE package_info (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        source_ip TEXT NOT NULL,
+        source_port INTEGER NOT NULL,
+        destination_port INTEGER NOT NULL,
+        proto_type TEXT NOT NULL
+        );"
+    )
+    .execute(&pool)
+    .await?;
 
     let rows: Vec<BLockedIp> = sqlx::query_as!(BLockedIp, r#"SELECT ipv4 FROM blocked_ip"#)
         .fetch_all(&pool)
@@ -80,7 +102,6 @@ async fn main() -> Result<(), anyhow::Error> {
     let events = RingBuf::try_from(bpf.map_mut("RB").unwrap())?;
     let mut events_fd = AsyncFd::new(events).unwrap();
     info!("Waiting for Ctrl-C...");
-
     loop {
         tokio::select! {
 
@@ -102,23 +123,23 @@ async fn main() -> Result<(), anyhow::Error> {
                     };
 
                     let ip_addr = Ipv4Addr::from(info.source_ip).to_string();
-                    let _ = sqlx::query!("INSERT INTO package_info
+                    let _ = sqlx::query("INSERT INTO package_info
                         (source_ip, source_port, destination_port, proto_type) 
-                        VALUES ($1, $2, $3, $4)",
-                        ip_addr,
-                        info.source_port,
-                        info.destination_port,
-                        proto_string
-                        ).execute(&pool).await;
-                    println!(
-                        "{} {} {} {}",
-                        Ipv4Addr::from(info.source_ip).to_string(), info.source_port, info.destination_port, info.proto_type
-                    );
+                        VALUES ($1, $2, $3, $4)"
+                        )
+                        .bind(ip_addr)
+                        .bind(info.source_port)
+                        .bind(info.destination_port)
+                        .bind(proto_string)
+                        .execute(&pool)
+                        .await;
                 }
 
             }=>{}
         };
     }
+
+    let _ = sqlx::query("DROP TABLE package_info").execute(&pool).await;
 
     Ok(())
 }
