@@ -1,4 +1,4 @@
-use actix_web::{middleware, web, App, HttpResponse, HttpServer};
+use actix_web::{middleware, web, App, HttpServer};
 use env_logger::Env;
 use errors::MyError;
 use sqlx::Sqlite;
@@ -9,6 +9,9 @@ use std::sync::Arc;
 
 #[path = "./errors.rs"]
 mod errors;
+
+#[path = "./package_info/mod.rs"]
+mod package_info;
 
 #[derive(Debug, Clone)]
 pub struct AppState {
@@ -37,10 +40,5 @@ async fn main() -> io::Result<()> {
 }
 
 fn route(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::scope("/").route("", web::get().to(get_info)));
-}
-
-async fn get_info(_state: web::Data<Arc<AppState>>) -> Result<HttpResponse, MyError> {
-    let jack = String::from("Hello");
-    Ok(HttpResponse::Ok().json(jack))
+    cfg.service(web::scope("/").route("", web::get().to(package_info::view::get_package_info)));
 }
