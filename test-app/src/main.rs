@@ -77,14 +77,14 @@ async fn main() -> Result<(), anyhow::Error> {
     let pool = SqlitePool::connect(db_url.as_str()).await?;
     let _ = sqlx::query("DROP TABLE package_info").execute(&pool).await;
 
-    let _ = sqlx::query!(
+    let _ = sqlx::query(
         "CREATE TABLE package_info (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         source_ip TEXT NOT NULL,
         source_port INTEGER NOT NULL,
         destination_port INTEGER NOT NULL,
         proto_type TEXT NOT NULL
-        );"
+        );",
     )
     .execute(&pool)
     .await?;
@@ -95,7 +95,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // 这个要在RingBuf前面执行，要不然就会违反借用原则
     for i in rows {
-        let block_addr: u32 = Ipv4Addr::from_str(&i.ipv4).unwrap().try_into()?;
+        let block_addr: u32 = Ipv4Addr::from_str(&i.ipv4).unwrap().into();
         blocklist.insert(block_addr, 0, 0)?;
     }
 
