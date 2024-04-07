@@ -1,26 +1,32 @@
-# test-app
+# 使用指南
 
-## Prerequisites
+## 后端项目启动
 
-1. Install bpf-linker: `cargo install bpf-linker`
+```shell
+# 启动ebpf程序
+make ebpf
 
-## Build eBPF
+# 然后再开一个终端,启动http服务
+make server
 
-```bash
-cargo xtask build-ebpf
+# 注意：一定要先启动ebpf程序，再启动http程序
 ```
 
-To perform a release build you can use the `--release` flag.
-You may also change the target architecture with the `--target` flag.
+## http访问构造
 
-## Build Userspace
+```shell
+# 这里的"ipv4"这个JSON数据要根据实际情况来变化
 
-```bash
-cargo build
-```
+# 删除被封锁的IP
+curl -X DELETE http://127.0.0.1:12345/blocked_ip/delete -H "Content-Type: application/js
+on" -d '{"ipv4": "172.0.0.1"}'
 
-## Run
+# 添加被封锁的IP
+curl -X POST http://127.0.0.1:12345/blocked_ip/write -H "Content-Type: application/js
+on" -d '{"ipv4": "172.0.0.1"}'
 
-```bash
-RUST_LOG=info cargo xtask run
+# 访问被封锁的IP列表
+curl http://127.0.0.1:12345/blocked_ip/read
+
+#
 ```
