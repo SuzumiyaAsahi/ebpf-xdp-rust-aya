@@ -1,17 +1,17 @@
 use actix_web::{middleware, web, App, HttpServer};
 use env_logger::Env;
 use errors::MyError;
-use sqlx::Sqlite;
-use sqlx::{sqlite::SqlitePool, Pool};
-use std::env;
-use std::io;
-use std::sync::Arc;
+use sqlx::{sqlite::SqlitePool, Pool, Sqlite};
+use std::{env, io, sync::Arc};
 
 #[path = "./errors.rs"]
 mod errors;
 
 #[path = "./package_info/mod.rs"]
 mod package_info;
+
+#[path = "./block_ip/mod.rs"]
+mod block_ip;
 
 #[derive(Debug, Clone)]
 pub struct AppState {
@@ -40,5 +40,23 @@ async fn main() -> io::Result<()> {
 }
 
 fn route(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::scope("/").route("", web::get().to(package_info::view::get_package_info)));
+    cfg.service(
+        web::scope("/package_info")
+            .route("/read", web::get().to(package_info::view::get_package_info)),
+    )
+    .service(
+        web::scope("/blocked_ip")
+            .route(
+                "/read",
+                web::get().to(block_ip::read_block_ip::read_block_ip),
+            )
+            .route(
+                "/write",
+                web::post().to(block_ip::write_block_ip::write_block_ip),
+            )
+            .route(
+                "/delete",
+                web::delete().to(block_ip::delete_block_ip::delete_block_ip),
+            ),
+    );
 }
