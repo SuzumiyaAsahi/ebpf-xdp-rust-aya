@@ -48,4 +48,4 @@ curl http://127.0.0.1:12345/package_info/read
 
 具体使用方法我看的是这个
 
-[](https://www.runoob.com/sqlite/sqlite-tutorial.html)
+https://www.runoob.com/sqlite/sqlite-tutorial.html
