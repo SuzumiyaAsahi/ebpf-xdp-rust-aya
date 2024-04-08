@@ -49,3 +49,9 @@ curl http://127.0.0.1:12345/package_info/read
 具体使用方法我看的是这个
 
 https://www.runoob.com/sqlite/sqlite-tutorial.html
+
+## 开发环境
+
+不过我已经安装好了，这里仅当备忘
+
+https://aya-rs.dev/book/start/development/
