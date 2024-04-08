@@ -83,7 +83,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // 创建 package_info, 建立存储数据包信息的表
     // 其实用TEMPORY 就行，但是不知怎么的，不好使
-    // query 相较于 query！的优点是query实现的
+    // query 相较于 query！的优点是query是运行时检测
     let _ = sqlx::query(
         "CREATE TABLE package_info (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -118,7 +118,6 @@ async fn main() -> Result<(), anyhow::Error> {
     // 提示 按Ctrl-C终止程序
     info!("Waiting for Ctrl-C...");
 
-    //
     loop {
         // select语句，两个异步语句选择其中一个执行，那个状态先完成，那个 => 后的代码就执行
         tokio::select! {
