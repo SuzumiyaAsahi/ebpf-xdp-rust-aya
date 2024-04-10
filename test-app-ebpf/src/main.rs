@@ -107,10 +107,11 @@ fn try_xdp_firewall(ctx: XdpContext) -> Result<u32, ()> {
                 IpProto::Udp,
             )
         }
-        IpProto::Icmp => {
-            info!(&ctx, "SRC IP:{:i}", source_ip);
-            return Ok(xdp_action::XDP_PASS);
-        }
+        // 阻止ICMP包通过，预防DDOS攻击
+        // IpProto::Icmp => {
+        //     info!(&ctx, "SRC IP:{:i}", source_ip);
+        //     return Ok(xdp_action::XDP_PASS);
+        // }
         _ => return Err(()),
     };
 

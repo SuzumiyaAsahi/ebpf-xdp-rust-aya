@@ -21,12 +21,10 @@ make server
 # ebpf运行之后也能添加或者删除IP地址，但要再次运行ebpf程序才能生效。
 
 # 删除被封锁的IP
-curl -X DELETE http://127.0.0.1:12345/blocked_ip/delete -H "Content-Type: application/js
-on" -d '{"ipv4": "172.0.0.1"}'
+curl -X DELETE http://127.0.0.1:12345/blocked_ip/delete -H "Content-Type: application/json" -d '{"ipv4": "172.0.0.1"}'
 
 # 添加被封锁的IP
-curl -X POST http://127.0.0.1:12345/blocked_ip/write -H "Content-Type: application/js
-on" -d '{"ipv4": "172.0.0.1"}'
+curl -X POST http://127.0.0.1:12345/blocked_ip/write -H "Content-Type: application/json" -d '{"ipv4": "172.0.0.1"}'
 
 # 访问被封锁的IP列表
 curl http://127.0.0.1:12345/blocked_ip/read
