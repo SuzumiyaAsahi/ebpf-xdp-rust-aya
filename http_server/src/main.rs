@@ -13,6 +13,9 @@ mod package_info;
 #[path = "./block_ip/mod.rs"]
 mod block_ip;
 
+#[path = "./kill_restart/mod.rs"]
+mod kill_restart;
+
 #[derive(Debug, Clone)]
 pub struct AppState {
     pub db_pool: Pool<Sqlite>,
@@ -58,5 +61,8 @@ fn route(cfg: &mut web::ServiceConfig) {
                 "/delete",
                 web::delete().to(block_ip::delete_block_ip::delete_block_ip),
             ),
+    )
+    .service(
+        web::scope("/kill_restart").route("/kill", web::delete().to(kill_restart::kill::kill_ebpf)),
     );
 }
