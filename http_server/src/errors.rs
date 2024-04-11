@@ -62,6 +62,7 @@ impl error::ResponseError for MyError {
     }
 }
 
+#[allow(clippy::recursive_format_impl)]
 impl std::fmt::Display for MyError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self)

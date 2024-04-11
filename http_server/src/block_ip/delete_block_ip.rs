@@ -1,6 +1,7 @@
 use crate::{
     block_ip::models::{BlockedIp, WriteIp},
     errors::MyError,
+    kill_restart::kill_and_restart::kill_and_restart,
     AppState,
 };
 use actix_web::{web, HttpResponse};
@@ -44,5 +45,7 @@ pub async fn delete_block_ip(
         .execute(db_pool)
         .await?;
 
-    Ok(HttpResponse::Ok().json("ipv4地址删除成功".to_string()))
+    kill_and_restart(state.clone()).await?;
+
+    Ok(HttpResponse::Ok().json("ipv4地址删除成功, 并且ebpf程序已经重新启动".to_string()))
 }

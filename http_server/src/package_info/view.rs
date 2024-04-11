@@ -1,6 +1,4 @@
-use crate::package_info::models::PackageInfo;
-use crate::AppState;
-use crate::MyError;
+use crate::{package_info::models::PackageInfo, AppState, MyError};
 use std::sync::Arc;
 
 use actix_web::{web, HttpResponse};

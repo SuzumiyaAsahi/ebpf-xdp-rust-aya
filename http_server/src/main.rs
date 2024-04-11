@@ -1,11 +1,15 @@
 use actix_web::{middleware, web, App, HttpServer};
 use env_logger::Env;
 use errors::MyError;
+use route::my_route;
 use sqlx::{sqlite::SqlitePool, Pool, Sqlite};
 use std::{env, io, sync::Arc};
 
 #[path = "./errors.rs"]
 mod errors;
+
+#[path = "./not_found.rs"]
+mod not_found;
 
 #[path = "./package_info/mod.rs"]
 mod package_info;
@@ -15,6 +19,9 @@ mod block_ip;
 
 #[path = "./kill_restart/mod.rs"]
 mod kill_restart;
+
+#[path = "./route/mod.rs"]
+mod route;
 
 #[derive(Debug, Clone)]
 pub struct AppState {
@@ -35,43 +42,9 @@ async fn main() -> io::Result<()> {
         App::new()
             .app_data(web::Data::new(Arc::clone(&app_state)))
             .wrap(middleware::Logger::default())
-            .configure(route)
+            .configure(my_route::route)
     })
     .bind("127.0.0.1:12345")?
     .run()
     .await
-}
-
-fn route(cfg: &mut web::ServiceConfig) {
-    cfg.service(
-        web::scope("/package_info")
-            .route("/read", web::get().to(package_info::view::get_package_info)),
-    )
-    .service(
-        web::scope("/blocked_ip")
-            .route(
-                "/read",
-                web::get().to(block_ip::read_block_ip::read_block_ip),
-            )
-            .route(
-                "/write",
-                web::post().to(block_ip::write_block_ip::write_block_ip),
-            )
-            .route(
-                "/delete",
-                web::delete().to(block_ip::delete_block_ip::delete_block_ip),
-            ),
-    )
-    .service(
-        web::scope("/kill_restart")
-            .route("/kill", web::get().to(kill_restart::kill::kill_ebpf))
-            .route(
-                "/restart",
-                web::get().to(kill_restart::restart::restart_ebpf),
-            )
-            .route(
-                "/kill_and_restart",
-                web::get().to(kill_restart::kill_and_restart::kill_and_restart),
-            ),
-    );
 }
