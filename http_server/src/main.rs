@@ -68,6 +68,10 @@ fn route(cfg: &mut web::ServiceConfig) {
             .route(
                 "/restart",
                 web::get().to(kill_restart::restart::restart_ebpf),
+            )
+            .route(
+                "/kill_and_restart",
+                web::get().to(kill_restart::kill_and_restart::kill_and_restart),
             ),
     );
 }

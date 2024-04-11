@@ -1,9 +1,7 @@
 use crate::{AppState, MyError};
 use actix_web::{web, HttpResponse};
-use std::{
-    process::{Command, Stdio},
-    sync::Arc,
-};
+use std::{process::Command, sync::Arc};
+// use std::process::Stdio;
 
 pub async fn restart_ebpf(_state: web::Data<Arc<AppState>>) -> Result<HttpResponse, MyError> {
     Command::new("make")

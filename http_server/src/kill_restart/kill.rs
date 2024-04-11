@@ -9,15 +9,10 @@ pub async fn kill_ebpf(_state: web::Data<Arc<AppState>>) -> Result<HttpResponse,
     let processes = s.processes_by_name(target_name_1);
 
     for process in processes {
-        println!(
-            "伟大的幸福即将降临: {}，PID: {}",
-            process.name(),
-            process.pid()
-        );
         Command::new("kill")
             .arg(format!("{}", process.pid()))
             .output()?;
-        thread::sleep(Duration::from_secs(1));
+        thread::sleep(Duration::from_millis(1000));
     }
 
     Ok(HttpResponse::Ok().json("ebpf程序已经关闭".to_string()))
