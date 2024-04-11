@@ -1,7 +1,9 @@
 use std::process::Command;
 use std::thread;
 
-fn main() {
+use anyhow::{Ok, Result};
+
+fn main() -> Result<(), anyhow::Error> {
     let http_server = thread::spawn(|| {
         Command::new("sh")
             .args(["-c", "cd ../http_server && cargo run"])
@@ -22,4 +24,6 @@ fn main() {
 
     ebpf_server.join().unwrap();
     http_server.join().unwrap();
+
+    Ok(())
 }

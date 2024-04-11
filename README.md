@@ -3,13 +3,8 @@
 ## 后端项目启动
 
 ```shell
-# 启动ebpf程序
-make ebpf
-
-# 然后再开一个终端,启动http服务
-make server
-
-# 注意：一定要先启动ebpf程序，再启动http程序
+# 启动ebpf程序和http_server
+make run
 ```
 
 ## http访问构造
