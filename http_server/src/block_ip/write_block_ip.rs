@@ -1,6 +1,7 @@
 use crate::{
     block_ip::models::{BlockedIp, WriteIp},
     errors::MyError,
+    kill_restart::kill_and_restart::kill_and_restart,
     AppState,
 };
 use actix_web::{web, HttpResponse};
@@ -49,5 +50,7 @@ pub async fn write_block_ip(
         .execute(db_pool)
         .await?;
 
-    Ok(HttpResponse::Ok().json("ipv4地址添加成功".to_string()))
+    kill_and_restart(state.clone()).await?;
+
+    Ok(HttpResponse::Ok().json("ipv4地址添加成功, ebpf程序也已经关闭并重启过".to_string()))
 }
