@@ -4,3 +4,5 @@ ebpf:
 server:
 	@cd ./http_server && cargo run
 
+run:
+	@cd ./runner && cargo run

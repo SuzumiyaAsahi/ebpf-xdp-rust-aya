@@ -1,3 +1,3 @@
 [workspace]
-members = ["xtask", "test-app", "test-app-common", "http_server"]
+members = ["xtask", "test-app", "test-app-common", "http_server", "runner"]
 resolver = "2"

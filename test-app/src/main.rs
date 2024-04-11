@@ -72,15 +72,8 @@ async fn main() -> Result<(), anyhow::Error> {
 
     dotenvy::dotenv().ok();
 
-    // let cwd = env::current_dir()?;
-    //
-    // // 打印路径
-    // println!("当前工作目录是: {}", cwd.display());
-
     // 读取环境变量，得到数据库的url
     let db_url = env::var("DATABASE_URL").expect("Please set DATABASE_URL");
-
-    println!("{db_url}");
 
     // 测试链接数据库
     let pool = SqlitePool::connect(db_url.as_str()).await?;
