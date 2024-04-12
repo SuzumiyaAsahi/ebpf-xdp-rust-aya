@@ -6,3 +6,6 @@ server:
 
 run:
 	@cd ./runner && cargo run
+
+kill:
+	@cd ./killer && cargo run

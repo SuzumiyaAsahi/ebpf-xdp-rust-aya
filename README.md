@@ -5,6 +5,9 @@
 ```shell
 # 启动ebpf程序和http_server
 make run
+
+# 关闭ebpf程序和http_server
+make kill
 ```
 
 ## http访问构造
@@ -12,14 +15,14 @@ make run
 ```shell
 # 这里的"ipv4"这个JSON数据要根据实际情况来变化
 
-# 不过实际上想添加或者删除封锁IP的数据都需要在ebpf程序运行之前才有效，因为ebpf程序是先在运行前读取数据库之后才运行。
-# ebpf运行之后也能添加或者删除IP地址，但要再次运行ebpf程序才能生效。
+# 添加被封锁的IP
+curl -X POST http://127.0.0.1:12345/blocked_ip/write -H "Content-Type: application/json" -d '{"ipv4": "172.0.0.1"}'
 
 # 删除被封锁的IP
 curl -X DELETE http://127.0.0.1:12345/blocked_ip/delete -H "Content-Type: application/json" -d '{"ipv4": "172.0.0.1"}'
 
-# 添加被封锁的IP
-curl -X POST http://127.0.0.1:12345/blocked_ip/write -H "Content-Type: application/json" -d '{"ipv4": "172.0.0.1"}'
+# 删除所有被封锁的IP
+curl -X DELETE http://127.0.0.1:12345/blocked_ip/flush
 
 # 访问被封锁的IP列表
 curl http://127.0.0.1:12345/blocked_ip/read
@@ -33,6 +36,18 @@ curl http://127.0.0.1:12345/blocked_ip/read
 #   pub proto_type: String,
 # }
 curl http://127.0.0.1:12345/package_info/read
+
+
+# 下面这些前端不用看
+
+# 关闭ebpf程序
+curl http://127.0.0.1:12345/kill_restart/kill
+
+# 启动ebpf程序
+curl http://127.0.0.1:12345/kill_restart/restart
+
+# 关闭ebpf程序并重新启动
+curl http://127.0.0.1:12345/kill_restart/kill_and_restart
 ```
 
 ## 数据库
@@ -43,7 +58,7 @@ curl http://127.0.0.1:12345/package_info/read
 
 https://www.runoob.com/sqlite/sqlite-tutorial.html
 
-## 开发环境
+## ebpf运行环境配置
 
 不过我已经安装好了，这里仅当备忘
 
