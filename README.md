@@ -74,6 +74,14 @@ struct Opt {
 
 将这里的eth0修改为自己的ebpf需要绑定的网卡名称，注意不要写错，然后保存退出即可。
 
+### WSL迁移
+
+```bash
+wsl --export Ubuntu-22.04 E://wslubuntu//Ubuntu-22.04.tar
+wsl --unregister Ubuntu-22.04
+wsl --import Ubuntu-22.04 E://wslubuntu E://wslubuntu//ubuntu-22.04.tar
+```
+
 ## 后端项目启动
 
 ```shell
