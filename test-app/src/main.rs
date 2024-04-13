@@ -64,7 +64,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     program.load()?;
 
-    program.attach(&opt.iface, XdpFlags::default())
+    program.attach(&opt.iface, XdpFlags::SKB_MODE)
         .context("failed to attach the XDP program with default flags - try changing XdpFlags::default() to XdpFlags::SKB_MODE")?;
 
     // 定义用户区的HashMap，用于和内核区通信

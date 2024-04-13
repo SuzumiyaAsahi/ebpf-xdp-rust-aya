@@ -1,3 +1,4 @@
+use actix_cors::Cors;
 use actix_web::{middleware, web, App, HttpServer};
 use env_logger::Env;
 use errors::MyError;
@@ -39,6 +40,7 @@ async fn main() -> io::Result<()> {
     });
 
     HttpServer::new(move || {
+        let cors = Cors::permissive();
         App::new()
             .app_data(web::Data::new(Arc::clone(&app_state)))
             .wrap(middleware::Logger::default())
