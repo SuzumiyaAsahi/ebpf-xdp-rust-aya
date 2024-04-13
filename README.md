@@ -1,13 +1,48 @@
 # 使用指南
 
+## 前情提要
+
+## Rust环境配置
+
+其实Rust的环境配置超级简单，简单到让你认为一个编程语言的环境配置就应该这样简单。
+
+```shell
+# 由于ebpf程序需要在root权限下安装和关闭，所以rust需要在root下安装。
+
+# 这条指令执行后会进入安装，整个过程中只需要按一次回车确认默认配置就可以
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# 将Rust更新至前沿版本，如果这条指令执行不了，就重新开一个终端，可能是你的环境配置没有更新导致的
+rustup update nightly
+
+# 将前沿版本设置为默认版本
+rustup default nightly
+```
+
 ## 后端项目启动
 
 ```shell
+# 由于ebpf程序需要在root权限下安装和关闭，所以下面的指令需要在root权限下运行。
+
 # 启动ebpf程序和http_server
 make run
 
 # 关闭ebpf程序和http_server
 make kill
+```
+
+## sqlite安装
+
+```shell
+apt-get update
+apt-get upgrade
+apt install sqlite3 libsqlite3-dev
+```
+
+## openssl安装
+
+```shell
+apt install openssl
 ```
 
 ## http访问构造

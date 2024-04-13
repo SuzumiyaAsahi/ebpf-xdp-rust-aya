@@ -32,7 +32,7 @@ static BLOCKLIST: HashMap<u32, u32> = HashMap::<u32, u32>::with_max_entries(1024
 
 // 环形缓冲区，用于内核和用户程序的通信
 #[map]
-static RB: RingBuf = RingBuf::with_byte_size(256 * 1024, 0);
+static RB: RingBuf = RingBuf::with_byte_size(512 * 1024, 0);
 
 // 所有通过内核的数据包都会通过这个函数
 #[xdp]
