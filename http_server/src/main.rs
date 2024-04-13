@@ -44,6 +44,7 @@ async fn main() -> io::Result<()> {
         App::new()
             .app_data(web::Data::new(Arc::clone(&app_state)))
             .wrap(middleware::Logger::default())
+            .wrap(cors)
             .configure(my_route::route)
     })
     .bind("127.0.0.1:12345")?
