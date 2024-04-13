@@ -55,9 +55,24 @@ apt install build-essential
 ```shell
 # 查看网卡名称
 ip a
-
-# 然后修改 test-app
 ```
+
+然后修改 test-app/src/main.rs 代码
+
+应该是在第十三行左右。
+
+```rust
+
+// 我们这个XDP程序绑定的是eth0网卡
+#[derive(Debug, Parser)]
+struct Opt {
+    #[clap(short, long, default_value = "eth0")]
+    iface: String,
+}
+
+```
+
+将这里的eth0修改为自己的ebpf需要绑定的网卡名称，注意不要写错，然后保存退出即可。
 
 ## 后端项目启动
 
