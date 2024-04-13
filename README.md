@@ -2,7 +2,7 @@
 
 ## 前情提要
 
-## Rust环境配置
+### Rust环境配置
 
 其实Rust的环境配置超级简单，简单到让你认为一个编程语言的环境配置就应该这样简单。
 
@@ -19,6 +19,46 @@ rustup update nightly
 rustup default nightly
 ```
 
+### sqlite安装
+
+```shell
+apt-get update
+apt-get upgrade
+apt install sqlite3 libsqlite3-dev
+```
+
+### openssl安装
+
+```shell
+apt install openssl
+apt install pkg-config
+apt install libssl-dev
+```
+
+### ebpf运行环境配置
+
+主要是来自于这里，不过对这个项目有用的是在下面被挑了出来
+https://aya-rs.dev/book/start/development/
+
+```shell
+# 也要在root下进行
+cargo install bpf-linker
+
+# 不过可能说没有cc之类的
+# 那就安装一下
+apt update
+apt install build-essential
+```
+
+### 根据自己的网卡修改
+
+```shell
+# 查看网卡名称
+ip a
+
+# 然后修改 test-app
+```
+
 ## 后端项目启动
 
 ```shell
@@ -29,20 +69,6 @@ make run
 
 # 关闭ebpf程序和http_server
 make kill
-```
-
-## sqlite安装
-
-```shell
-apt-get update
-apt-get upgrade
-apt install sqlite3 libsqlite3-dev
-```
-
-## openssl安装
-
-```shell
-apt install openssl
 ```
 
 ## http访问构造
@@ -92,9 +118,3 @@ curl http://127.0.0.1:12345/kill_restart/kill_and_restart
 具体使用方法我看的是这个
 
 https://www.runoob.com/sqlite/sqlite-tutorial.html
-
-## ebpf运行环境配置
-
-不过我已经安装好了，这里仅当备忘
-
-https://aya-rs.dev/book/start/development/
