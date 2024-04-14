@@ -3,6 +3,7 @@ use core::fmt;
 use serde::Serialize;
 use sqlx::error::Error as SQLxError;
 
+#[allow(dead_code)]
 #[derive(Debug, Serialize)]
 pub enum MyError {
     DBError(String),
