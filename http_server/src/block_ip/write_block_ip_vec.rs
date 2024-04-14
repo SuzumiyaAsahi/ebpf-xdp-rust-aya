@@ -44,8 +44,10 @@ pub async fn write_block_ip_vec(
         ip.push(i.ipv4);
     }
 
-    // 如果不匹配就返回错误
-    for i in blocked_ip_vec {
+    // 必须所有输入的IP地址都要过检查，要不然就一个都不要过
+    // 感觉好.......
+    for i in blocked_ip_vec.clone() {
+        // 如果不匹配就返回错误
         if !re.is_match(i.as_str()) {
             return Err(MyError::InvalidInput(
                 format!("输入的{}地址并不是符合ipv4规范的IP地址", i).to_string(),
@@ -57,7 +59,9 @@ pub async fn write_block_ip_vec(
                 format!("{}已经存在于数据库中了", i).to_string(),
             ));
         }
+    }
 
+    for i in blocked_ip_vec {
         // 将IP地址存入到数据库中
         let _ = sqlx::query("INSERT INTO blocked_ip (ipv4) VALUES ($1)")
             .bind(i)
@@ -67,5 +71,5 @@ pub async fn write_block_ip_vec(
 
     kill_and_restart(state.clone()).await?;
 
-    Ok(HttpResponse::Ok().json("ipv4成批地添加成功, 幸福的时代即将到来".to_string()))
+    Ok(HttpResponse::Ok().json("ipv4成批地添加成功, ebpf程序已经重启".to_string()))
 }

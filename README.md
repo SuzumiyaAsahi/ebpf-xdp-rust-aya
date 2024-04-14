@@ -99,7 +99,10 @@ make kill
 ```shell
 # 这里的"ipv4"这个JSON数据要根据实际情况来变化
 
-# 添加被封锁的IP
+# 成批地添加被封锁的IP
+curl -X POST http://127.0.0.1:12345/blocked_ip/write_many -H "Content-Type: application/json" -d '[{"ipv4": "172.0.0.1"}, {"ipv4": "172.0.0.2"}, {"ipv4": "172.0.0.3"}]'
+
+# 添加单个被封锁的IP
 curl -X POST http://127.0.0.1:12345/blocked_ip/write -H "Content-Type: application/json" -d '{"ipv4": "172.0.0.1"}'
 
 # 删除被封锁的IP
