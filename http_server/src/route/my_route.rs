@@ -17,6 +17,10 @@ pub fn route(cfg: &mut web::ServiceConfig) {
                 web::post().to(block_ip::write_block_ip::write_block_ip),
             )
             .route(
+                "/write_many",
+                web::post().to(block_ip::write_block_ip_vec::write_block_ip_vec),
+            )
+            .route(
                 "/delete",
                 web::delete().to(block_ip::delete_block_ip::delete_block_ip),
             )
