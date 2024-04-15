@@ -24,6 +24,10 @@ pub fn route(cfg: &mut web::ServiceConfig) {
                 "/delete",
                 web::delete().to(block_ip::delete_block_ip::delete_block_ip),
             )
+            .route(
+                "/delete_many",
+                web::delete().to(block_ip::delete_block_ip_vec::delete_block_ip_vec),
+            )
             .route("/flush", web::delete().to(block_ip::flush::flush_all)),
     )
     .service(
