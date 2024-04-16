@@ -108,6 +108,9 @@ curl -X POST http://127.0.0.1:12345/blocked_ip/write -H "Content-Type: applicati
 # 删除被封锁的IP
 curl -X DELETE http://127.0.0.1:12345/blocked_ip/delete -H "Content-Type: application/json" -d '{"ipv4": "172.0.0.1"}'
 
+# 成批地删除被封锁的IP
+curl -X DELETE http://127.0.0.1:12345/blocked_ip/delete_many -H "Content-Type: application/json" -d '[{"ipv4": "172.0.0.1"}, {"ipv4": "172.0.0.2"}, {"ipv4": "172.0.0.3"}]'
+
 # 删除所有被封锁的IP
 curl -X DELETE http://127.0.0.1:12345/blocked_ip/flush
 

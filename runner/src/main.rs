@@ -1,5 +1,4 @@
-use std::process::Command;
-use std::thread;
+use std::{process::Command, thread};
 
 use anyhow::{Ok, Result};
 

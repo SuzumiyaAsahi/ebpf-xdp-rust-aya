@@ -16,7 +16,7 @@ pub async fn write_block_ip_vec(
 
     // 判断传入的IP数组是否为空
     if write_ip.is_empty() {
-        return Ok(HttpResponse::Ok().json("传入的IP数量为零,请填写要封锁的IP地址"));
+        return Ok(HttpResponse::Ok().json("添加失败，传入的IP数量为零,请填写要封锁的IP地址"));
     }
 
     // 正则检查，检查传入的IP地址是否符合ipv4规范
@@ -32,7 +32,7 @@ pub async fn write_block_ip_vec(
 
     // 再检查一下，看看是不是传的都是空的数据
     if blocked_ip_vec.is_empty() {
-        return Ok(HttpResponse::Ok().json("传入的IP数量为零,请填写要封锁的IP地址"));
+        return Ok(HttpResponse::Ok().json("添加失败，传入的IP数量为零,请填写要封锁的IP地址"));
     }
 
     // 现在的封锁IP数据列表
@@ -50,13 +50,13 @@ pub async fn write_block_ip_vec(
         // 如果不匹配就返回错误
         if !re.is_match(i.as_str()) {
             return Err(MyError::InvalidInput(
-                format!("输入的{}地址并不是符合ipv4规范的IP地址", i).to_string(),
+                format!("添加失败，输入的{}地址并不是符合ipv4规范的IP地址", i).to_string(),
             ));
         }
         // 检查一下这个IP地址是否已经存在
         if ip.contains(&i) {
             return Err(MyError::DBError(
-                format!("{}已经存在于数据库中了", i).to_string(),
+                format!("添加失败，{}已经存在于数据库中了", i).to_string(),
             ));
         }
     }
