@@ -6,12 +6,21 @@ use crate::{
 };
 use actix_web::{web, HttpResponse};
 use regex::Regex;
-use std::sync::Arc;
+use std::{collections::HashSet, sync::Arc};
 
 pub async fn delete_block_ip_vec(
     state: web::Data<Arc<AppState>>,
     web::Json(delete_ip): web::Json<Vec<WriteIp>>,
 ) -> Result<HttpResponse, MyError> {
+    // 检查一下输入的数据是否有重复项
+    let mut ips_set = HashSet::new();
+
+    for ip_entry in &delete_ip {
+        if !ips_set.insert(&ip_entry.ipv4) {
+            return Err(MyError::InvalidInput("传入的数据中有重复IP地址".into()));
+        }
+    }
+
     let db_pool = &state.db_pool;
 
     // 判断传入的IP数组是否为空
