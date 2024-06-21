@@ -1,0 +1,95 @@
+body {
+	font-family: 'Arial', sans-serif;
+	background-image:url('bg4.jpg');
+	background-color: #DCDCDC;
+	background-repeat:no-repeat;
+	}
+#container {
+	min-width: 1630px;
+	position: absolute;
+	left: 40px;
+	right:40px;
+}
+.item {
+	width: 800px;
+	height:760px;
+	position: absolute;
+	top:50px;
+	
+	border-radius:20px;
+	border-width:0px;
+	box-shadow: 0 10px 4px rgba(0, 0, 0, 0.3);
+	box-sizing: border-box;
+}
+#packetList {
+	left: 0px;
+}
+#ban {
+	right: 0px;
+}
+#header h1, #banned h1 {
+	margin: 0;
+	padding: 20px;
+	text-align: center;
+	background: radial-gradient(#0000FF26 0%,#0000FF00);
+}
+#banned h1 {
+	background: radial-gradient(#FF000026 0%,#FF000000);
+}
+.list1 {
+	background: linear-gradient(0deg,#EEE9E900,#EEE9E980,#EEE9E900);
+}
+.list2 {
+	background: linear-gradient(0deg,#CDC9C900,#CDC9C980,#CDC9C900);
+}
+.list1, .list2 {
+	height:580px;
+	width:200px;
+	text-align:center;
+	float:left;
+}
+.bigger_p {
+	font-size: 20px;
+}
+.roll {
+	border: 0px solid gray;
+	padding: 10px;
+	height: 491px;
+	overflow-y: scroll;
+}
+.roll input[type=checkbox] {
+	margin-right: 10px;
+}
+.roll::-webkit-scrollbar {
+	display:none;
+}
+#ban_list {
+	margin-top:0px;
+	background: linear-gradient(0deg,#CDC9C900,#CDC9C99A,#CDC9C900);
+}
+#temp {
+	background: linear-gradient(0deg,#EEE9E900,#EEE9E980,#EEE9E900);
+}
+
+button {
+	border-radius:100px;
+	padding: 10px 20px;
+	margin: 5px;
+	border: none;
+	background-color: #98F5FF66;
+	color: black;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+button:hover {
+	background-color: #98F5FF;
+}
+#pages {
+	margin-top: 20px;
+}
+#banName {
+	margin-bottom: 10px;
+	padding: 10px;
+	width: calc(60%); /* Adjust input width */
+	border: 0px solid #ccc;
+}
