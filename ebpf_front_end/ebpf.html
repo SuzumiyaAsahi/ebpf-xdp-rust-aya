@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ebpf 防火墙</title>
+    <link rel="stylesheet" type="text/css" href="cfg.css">
+</head>
+<body>
+    <div id="container">
+		<div id="packetList" class="item">
+			<div id="header">
+				<h1 style="margin-bottom:0;">报文列表</h1>
+			</div>
+			<div class="list1">
+				<h2 style="margin-bottom:1;">源IP</h2>
+				<div id="src_ip" class="bigger_p"></div>
+				
+			</div>
+			<div class="list2">
+				<h2 style="margin-bottom:1;">源端口</h2>
+				<div id="src_port" class="bigger_p"></div>
+			</div>
+			<div class="list1">
+				<h2 style="margin-bottom:1;">目标端口</h2>
+				<div id="dst_port" class="bigger_p"></div>
+			</div>
+			<div class="list2">
+				<h2 style="margin-bottom:1;">报文类型</h2>
+				<div id="proto_type" class="bigger_p"></div>
+			</div>
+
+			<div id="pages" style="width:800px;clear:both;" align="center">
+				<h3 style="margin-bottom:1;">--/--</h3>
+			</div>
+
+			<div id="btn" style="background-color:#FFA57700;width:800px;clear:both;text-align:center;" align="center">
+				<button onclick="pageUp()">上一页</button>
+				<button onclick="pageDown()">下一页</button>
+				<button onclick="fetchData()">刷新</button>
+			</div>
+		</div>
+	<!------------------------------ 分割线 ------------------------------------>
+		<div id="ban" class="item">
+			<div id="banned">
+				<h1 style="margin-bottom:0;">禁用列表</h1>
+			</div>
+			<div style="height:600px;width:400px;float:left;" align="center">
+				<h2 style="margin-bottom:10px;">已禁用IP</h2>
+				<div id="banNum"><h3 style="margin:0;">共0个<h3></div>
+				<div id = "ban_list" class = "roll">没联网</div>
+				<div align="center">
+					<button onclick="unbanSelected()">解禁选中项</button>
+					<button onclick="getBannedList()">刷新</button>
+					<button onclick="unbanALL()">启用所有</button>
+				</div>
+			</div>
+			<div style="height:600px;width:400px;float:left;" align="center">
+					<h2 style="margin-top:1;margin-bottom:0;">待禁用列表</h2>
+					<label for="banName">IP：</label>
+					<input type="text" id="banName" placeholder="输入要禁用的IP" required>
+					<button onclick="addBan()">添加</button>
+					
+					
+				<div id = "temp" class = "roll"></div>
+				<div align="center">
+					<button onclick="deleteSelected()">删除选中项</button>
+					<button onclick="submitBan()">提交</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="cfg.css"></script>
+	<script src="get&show.js"></script>
+	<script src="post&delete.js"></script>
+</body>
+</html>
