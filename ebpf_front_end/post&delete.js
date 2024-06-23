@@ -34,9 +34,19 @@ function addBan() {
 		alert("请输入有效的 IPv4 地址！");
 		return;
 	}
+	let had = false;
 	// 验证是否已在temp列表
 	var paragraphs = document.getElementById("temp").getElementsByTagName("p");
-	let had = false;
+	for (var i = 0; i < paragraphs.length; i++) {
+        // 获取段落元素的文本内容
+		if(inputString === paragraphs[i].textContent) {
+			alert('重复IP');
+			had = true;
+			break;
+		}
+    }
+	// 验证是否已在ban_list列表
+	var paragraphs = document.getElementById("ban_list").getElementsByTagName("p");
 	for (var i = 0; i < paragraphs.length; i++) {
         // 获取段落元素的文本内容
 		if(inputString === paragraphs[i].textContent) {
